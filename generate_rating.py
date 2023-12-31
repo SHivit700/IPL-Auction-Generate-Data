@@ -4,6 +4,76 @@ import csv
 bowling_file_path = '/Users/shivit/Desktop/Lab/webTester/dataIPL/bowling_data.txt'
 batting_file_path = '/Users/shivit/Desktop/Lab/webTester/dataIPL/batting_data.txt'
 
+# Calculating batting score
+max_runs = 890
+max_score = 129
+max_avg = 69
+max_sr = 216.66
+max_hundreds = 3
+max_fifties = 8
+max_4s = 85
+max_6s = 36
+
+# Open the file and read it as CSV
+with open(batting_file_path, 'r') as file:
+    csv_reader = csv.reader(file)
+
+    # Iterate over each row in the CSV
+    for row in csv_reader:
+        if row:  # Check if the row is not empty
+            team_name = row[0]
+            player_name = row[1]
+            player_match_div = int(row[2])
+            player_not_out_div = int(row[3])
+            player_runs_div = int(row[4])
+            player_highscore_div = int(row[5])
+            player_average_div = float(row[6])
+            player_strike_rate_div = float(row[7])
+            player_100_div = int(row[8])
+            player_50_div = int(row[9])
+            player_4s_div = int(row[10])
+            player_6s_div = int(row[11])
+            player_ducks_div = int(row[12])
+
+            # Calculate the bowling rating
+            # Normalizing each factor (assuming higher is better for simplicity, except for economy and average)
+            normalized_runs = player_runs_div / max_runs
+            normalized_score = player_highscore_div / max_score
+            normalized_average = player_average_div / max_avg
+            normalized_strike_rate = player_strike_rate_div / max_sr
+            normalized_100 = player_100_div / max_hundreds
+            normalized_50 = player_50_div / max_fifties
+            normalized_4s = player_4s_div / max_4s
+            normalized_6s = player_6s_div / max_6s
+
+            # Weighing each factor
+            score = (normalized_runs * 53) + \
+                    (normalized_score * 10) + \
+                    (normalized_average * 5) + \
+                    (normalized_strike_rate * 7) + \
+                    (normalized_100 * 10) + \
+                    (normalized_50 * 5) + \
+                    (normalized_4s * 2) + \
+                    (normalized_6s * 3) - \
+                    (player_ducks_div * 5)
+
+            rating = score * 100  # Scale to 100
+
+            print(team_name + "," + player_name + "," + str(player_match_div) + "," + str(player_not_out_div)
+                  + "," + str(player_runs_div) + "," + str(player_highscore_div) + "," + str(player_average_div) + ","
+                  + str(player_strike_rate_div) + "," + str(player_100_div) + "," + str(player_50_div) + "," +
+                  str(player_4s_div) + "," + str(player_6s_div) + "," + str(player_ducks_div) + "," + str(rating))
+
+            # Print the player's name and their rating
+            # if rating > 0:
+            #     print(player_name)
+            # print(str(rating) + " " + str(average) + " " + str(economy_rate))
+            # print(f"{player_name} from {team} has a rating of {rating}")
+print(" ")
+print(" ")
+print(" ")
+
+
 # Calculating bowling score
 # Ensure if bowler has economy 0 then assign max_economy to him
 max_wickets = 28

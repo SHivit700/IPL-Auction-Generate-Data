@@ -14,7 +14,7 @@ options.add_experimental_option("prefs", {
     "download.directory_upgrade": True,
     "safebrowsing.enabled": True
 })
-# options.add_argument("--headless")
+options.add_argument("--headless")
 options.add_argument("window-size=1920,1080")  # Set the desired window size
 os.environ['PATH'] += r"C:/SeleniumDrivers"
 driver = webdriver.Chrome(options=options)
@@ -90,7 +90,11 @@ try:
             # Ducks
             player_ducks_div = player.find_element(By.CLASS_NAME, "si-st")
 
-            print(team_name.text + "," + player_name.text + "," + player_match_div.text + "," + player_not_out_div.text + "," + player_runs_div.text + "," + player_highscore_div.text + "," + player_average_div.text + "," + player_strike_rate_div.text + "," + player_100_div.text + "," + str(player_50_div.text) + "," + player_4s_div.text + "," + player_6s_div.text + "," + player_ducks_div.text + "," + str())
+            print(team_name.text + "," + player_name.text + "," + player_match_div.text + "," + player_not_out_div.text
+                  + "," + player_runs_div.text + "," + player_highscore_div.text.replace('*', '') + "," +
+                  player_average_div.text.replace("-", player_highscore_div.text.replace('*', '')) + ","
+                  + player_strike_rate_div.text + "," + player_100_div.text + "," + str(player_50_div.text) + "," +
+                  player_4s_div.text + "," + player_6s_div.text + "," + player_ducks_div.text + "," + str())
 
         # Scroll up by one window height
         driver.execute_script("window.scrollBy(0, -window.innerHeight);")
