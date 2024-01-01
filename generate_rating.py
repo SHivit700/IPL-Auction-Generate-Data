@@ -41,25 +41,29 @@ with (open(batting_file_path, 'r') as file):
 
                 # Calculate the bowling rating
                 # Normalizing each factor (assuming higher is better for simplicity, except for economy and average)
-                normalized_runs = (player_runs_div / player_match_div) / (max_runs / 16)
+                normalized_runs = (player_runs_div / max_runs)
+                normalized_runs_per_match = (player_runs_div / player_match_div) / (max_runs / 16)
                 normalized_score = player_highscore_div / max_score
                 normalized_average = player_average_div / max_avg
                 normalized_strike_rate = player_strike_rate_div / max_sr
-                normalized_100 = player_100_div / max_hundreds
-                normalized_50 = player_50_div / max_fifties
-                normalized_4s = player_4s_div / max_4s
-                normalized_6s = player_6s_div / max_6s
+                normalized_100 = (player_100_div / player_match_div) / (max_hundreds / 14)
+                normalized_50 = (player_50_div / player_match_div) / (max_fifties / 14)
+                normalized_4s = (player_4s_div / player_match_div) / (max_4s / 14)
+                normalized_6s = (player_6s_div / player_match_div) / (max_6s / 14)
 
                 # Weighing each factor
                 score = (normalized_runs * 15) + \
-                        (normalized_score * 10) + \
+                        (normalized_runs_per_match * 15) + \
+                        (normalized_score * 20) + \
                         (normalized_average * 20) + \
-                        (normalized_strike_rate * 15) + \
-                        (normalized_100 * 10) + \
-                        (normalized_50 * 5) + \
-                        (normalized_4s * 5) + \
+                        (normalized_strike_rate * 20) + \
+                        (normalized_100 * 20) + \
+                        (normalized_50 * 7.5) + \
+                        (normalized_4s * 7.5) + \
                         (normalized_6s * 10) - \
-                        (player_ducks_div * 5)
+                        (player_ducks_div * 5) + \
+                        (player_not_out_div * 2.5) + \
+                        (player_match_div * 2.5)
 
                 rating = score * 100  # Scale to 100
 

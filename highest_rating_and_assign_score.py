@@ -200,3 +200,14 @@ with open(combined_file_path, 'w', newline='') as file:
     csv_writer = csv.writer(file)
     for row in combined_data:
         csv_writer.writerow(row)
+
+print("")
+print("")
+# List of best all rounders
+# data = []
+with open(combined_file_path, 'r') as file:
+    csv_reader = csv.reader(file)
+    for row in csv_reader:
+        # data.append(str(row[1]) + "," + str(row[13] + row[26]))
+        if int(row[13]) + int(row[26]) >= 180:
+            print(str(row[1]) + "," + str(row[13] + "," + row[26]))
