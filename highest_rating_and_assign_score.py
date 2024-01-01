@@ -123,8 +123,8 @@ with open(batting_file_path, 'r') as file:
             #       + "," + str(wickets) + "," + bbi + "," + str(average) + "," + str(economy_rate) + "," +
             #       str(strike_rate) + "," + str(three_wickets) + "," + str(five_wickets) + "," +
             #       str(round(normalized_ratings[count])) + ",")
-            if normalized_ratings[count] >= 80:
-                print(str(player_name) + "," + str(normalized_ratings[count]))
+            if normalized_ratings[count] >= 90:
+                print(str(player_name) + "," + str(normalized_ratings[count]) + "," + str(normalized_ratings_runs[count]))
             count += 1
 
 
@@ -205,9 +205,9 @@ print("")
 print("")
 # List of best all rounders
 # data = []
-with open(combined_file_path, 'r') as file:
-    csv_reader = csv.reader(file)
-    for row in csv_reader:
-        # data.append(str(row[1]) + "," + str(row[13] + row[26]))
-        if int(row[13]) + int(row[26]) >= 180:
-            print(str(row[1]) + "," + str(row[13] + "," + row[26]))
+# with open(combined_file_path, 'r') as file:
+#     csv_reader = csv.reader(file)
+#     for row in csv_reader:
+#         # data.append(str(row[1]) + "," + str(row[13] + row[26]))
+#         if int(row[13]) + int(row[26]) >= 180:
+#             print(str(row[1]) + "," + str(row[13] + "," + row[26]))

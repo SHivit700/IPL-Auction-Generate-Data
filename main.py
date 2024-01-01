@@ -24,7 +24,7 @@ print("Starting test")
 
 # Getting batting data
 try:
-    for team in range(1, 10):
+    for team in range(1, 11):
         # print(team)
         all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
         team_select = Select(all_select_elements[2])
@@ -116,7 +116,7 @@ except NoSuchElementException:
 
 # Getting bowling data
 try:
-    for team in range(1, 10):
+    for team in range(1, 11):
         # print(team)
         all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
         team_select = Select(all_select_elements[2])

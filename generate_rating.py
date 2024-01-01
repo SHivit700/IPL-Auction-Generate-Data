@@ -39,10 +39,13 @@ with (open(batting_file_path, 'r') as file):
                 player_6s_div = int(row[11])
                 player_ducks_div = int(row[12])
 
+                balls_faced = (player_runs_div / player_strike_rate_div) * 100
+                balls_faced_max_runs = 640
+
                 # Calculate the bowling rating
                 # Normalizing each factor (assuming higher is better for simplicity, except for economy and average)
                 normalized_runs = (player_runs_div / max_runs)
-                normalized_runs_per_match = (player_runs_div / player_match_div) / (max_runs / 16)
+                normalized_runs_per_ball = (player_runs_div / balls_faced) / (max_runs / balls_faced_max_runs)
                 normalized_score = player_highscore_div / max_score
                 normalized_average = player_average_div / max_avg
                 normalized_strike_rate = player_strike_rate_div / max_sr
@@ -52,12 +55,12 @@ with (open(batting_file_path, 'r') as file):
                 normalized_6s = (player_6s_div / player_match_div) / (max_6s / 14)
 
                 # Weighing each factor
-                score = (normalized_runs * 15) + \
-                        (normalized_runs_per_match * 15) + \
+                score = (normalized_runs * 17.5) + \
+                        (normalized_runs_per_ball * 12.5) + \
                         (normalized_score * 20) + \
                         (normalized_average * 20) + \
                         (normalized_strike_rate * 20) + \
-                        (normalized_100 * 20) + \
+                        (normalized_100 * 10) + \
                         (normalized_50 * 7.5) + \
                         (normalized_4s * 7.5) + \
                         (normalized_6s * 10) - \
@@ -67,9 +70,9 @@ with (open(batting_file_path, 'r') as file):
 
                 rating = score * 100  # Scale to 100
 
-                runs_scored = (normalized_runs * 30) + (normalized_score * 10) + (normalized_average * 20) + \
-                            (normalized_strike_rate * 20) + (normalized_100 * 10) + (normalized_50 * 5) + \
-                            (normalized_4s * 5) + (normalized_6s * 10) - (player_ducks_div * 5)
+                runs_scored = (normalized_runs * 17.5) + (normalized_runs_per_ball * 12.5) + (normalized_score * 15) + \
+                            (normalized_average * 12.5) + (normalized_strike_rate * 25) + (normalized_100 * 10) + \
+                            (normalized_50 * 10) + (normalized_4s * 12.5) + (normalized_6s * 15)
 
                 # Write to file
                 write_file.write(team_name + "," + player_name + "," + str(player_match_div) + "," + str(player_not_out_div)
