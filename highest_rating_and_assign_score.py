@@ -43,10 +43,12 @@ with open(bowling_file_path, 'r') as file:
         three_wickets = int(row[11])
         five_wickets = int(row[12])
 
-        print(team + "," + player_name + "," + str(match) + "," + str(overs) + "," + str(maidens) + "," + str(runs)
-              + "," + str(wickets) + "," + bbi + "," + str(average) + "," + str(economy_rate) + "," +
-              str(strike_rate) + "," + str(three_wickets) + "," + str(five_wickets) + "," +
-              str(round(normalized_ratings[count])) + ",")
+        # print(team + "," + player_name + "," + str(match) + "," + str(overs) + "," + str(maidens) + "," + str(runs)
+        #       + "," + str(wickets) + "," + bbi + "," + str(average) + "," + str(economy_rate) + "," +
+        #       str(strike_rate) + "," + str(three_wickets) + "," + str(five_wickets) + "," +
+        #       str(round(normalized_ratings[count])) + ",")
+        if normalized_ratings[count] >= 80:
+            print(str(player_name))
         count += 1
 
 print(" ")
@@ -68,7 +70,7 @@ with open(batting_file_path, 'r') as file:
 min_rating = min(ratings_batting)
 adjusted_ratings = [rating - min_rating for rating in ratings_batting]
 max_adjusted_rating = max(adjusted_ratings)
-normalized_ratings = [(round((rating / max_adjusted_rating) * 70, 2) + 30)for rating in adjusted_ratings]
+normalized_ratings = [(round((rating / max_adjusted_rating) * 60, 2) + 40)for rating in adjusted_ratings]
 # print(normalized_ratings)
 
 count = 0
@@ -93,8 +95,10 @@ with open(batting_file_path, 'r') as file:
         three_wickets = int(row[11])
         five_wickets = int(row[12])
 
-        print(team + "," + player_name + "," + str(match) + "," + str(overs) + "," + str(maidens) + "," + str(runs)
-              + "," + str(wickets) + "," + bbi + "," + str(average) + "," + str(economy_rate) + "," +
-              str(strike_rate) + "," + str(three_wickets) + "," + str(five_wickets) + "," +
-              str(round(normalized_ratings[count])) + ",")
+        # print(team + "," + player_name + "," + str(match) + "," + str(overs) + "," + str(maidens) + "," + str(runs)
+        #       + "," + str(wickets) + "," + bbi + "," + str(average) + "," + str(economy_rate) + "," +
+        #       str(strike_rate) + "," + str(three_wickets) + "," + str(five_wickets) + "," +
+        #       str(round(normalized_ratings[count])) + ",")
+        if normalized_ratings[count] >= 80:
+            print(str(player_name))
         count += 1
