@@ -31,16 +31,16 @@ try:
         team_select.select_by_index(team)
         # team_select.select_by_visible_text(team)
 
-        # Scroll down by one screen height
-        driver.execute_script("window.scrollBy(0, window.innerHeight);")
-
         # Click on load more button
-        time.sleep(2)
-        try:
-            load_more_button = driver.find_element(By.CLASS_NAME, "si-action")
-            load_more_button.click()
-        except NoSuchElementException as e:
-            print()
+        for i in range(0, 2):
+            # Scroll down by one screen height
+            driver.execute_script("window.scrollBy(0, 800)")
+            time.sleep(2)
+            try:
+                load_more_button = driver.find_element(By.CLASS_NAME, "si-action")
+                load_more_button.click()
+            except NoSuchElementException as e:
+                pass
 
         # print("Load more button clicked")
 
@@ -96,8 +96,9 @@ try:
                   + player_strike_rate_div.text + "," + player_100_div.text + "," + str(player_50_div.text) + "," +
                   player_4s_div.text + "," + player_6s_div.text + "," + player_ducks_div.text + "," + str())
 
-        # Scroll up by one window height
-        driver.execute_script("window.scrollBy(0, -window.innerHeight);")
+        # Scroll up by two window height
+        for i in range(0, 3):
+            driver.execute_script("window.scrollBy(0, -800)")
 except NoSuchElementException:
     print("Whoops")
 
@@ -122,16 +123,16 @@ try:
         team_select.select_by_index(team)
         # team_select.select_by_visible_text(team)
 
-        # Scroll down by one screen height
-        driver.execute_script("window.scrollBy(0, window.innerHeight);")
-
         # Click on load more button
-        time.sleep(2)
-        try:
-            load_more_button = driver.find_element(By.CLASS_NAME, "si-action")
-            load_more_button.click()
-        except NoSuchElementException as e:
-            print()
+        for i in range(0, 2):
+            # Scroll down by one screen height
+            driver.execute_script("window.scrollBy(0, 800)")
+            time.sleep(2)
+            try:
+                load_more_button = driver.find_element(By.CLASS_NAME, "si-action")
+                load_more_button.click()
+            except NoSuchElementException as e:
+                pass
 
         # print("Load more button clicked")
 
@@ -183,7 +184,8 @@ try:
 
             print(team_name.text + "," + player_name.text + "," + player_match_div.text + "," + player_overs_div.text + "," + player_maidens_div.text + "," + player_runs_div.text + "," + player_wickets_div.text + "," + player_bbi_div.text + "," + player_average_div.text + "," + player_economy_div.text + "," + player_strike_rate_div.text + "," + player_3w_div.text + "," + player_5w_div.text + ",")
 
-        # Scroll up by one window height
-        driver.execute_script("window.scrollBy(0, -window.innerHeight);")
+        # Scroll up by two window height
+        for i in range(0, 3):
+            driver.execute_script("window.scrollBy(0, -800)")
 except NoSuchElementException:
     print("Whoops")
