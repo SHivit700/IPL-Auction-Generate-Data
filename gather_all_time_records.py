@@ -24,493 +24,990 @@ driver.get("https://www.kkr.in/stats")
 
 print("Starting test")
 years = 16
+batting = True
 
-# Getting batting data
-previous_average = 0
-previous_strike_rate = 0
-try:
-    # Get most runs
-    highest_score = 0
-    highest_score_player = ""
-    for year in range(0, years):
+if batting:
+    # Getting batting data
+    previous_average = 0
+    previous_strike_rate = 0
+    try:
+        # Get most runs
+        highest_score = 0
+        highest_score_player = ""
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
+
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
+
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Runs
+                player_runs_div = player.find_element(By.CLASS_NAME, "si-runs")
+                if int(player_runs_div.text) > highest_score:
+                    highest_score = int(player_runs_div.text)
+                    highest_score_player = player_name.text
+
+                # Average
+                previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+
+                print(team_name.text + "," + player_name.text + "," + str(player_runs_div.text) + ",")
+
+        print("Highest Runs: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
+
+    print("")
+    print("")
+    previous_ballfaced = 0
+    previous_strike_rate = 0
+    try:
+        # Get Highest Score
+        highest_score = 0
+        highest_score_player = ""
+
+        # Select the highest score option
         all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-        team_select = Select(all_select_elements[0])
-        team_select.select_by_index(year)
+        team_select = Select(all_select_elements[1])
+        team_select.select_by_index(1)
+        time.sleep(5)
 
-        # Select all players list
-        parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
-        players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
-        player = players_list[0]
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
 
-        # Wait for div to load
-        wait_screen_loads = WebDriverWait(player, 20)
-        # Use a lambda function to check if the text is not equal to previous_average
-        element_found = wait_screen_loads.until(
-            lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
-                      d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
-        )
-        if element_found:
-            # Team Name
-            team_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
-            team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
 
-            # Name
-            player_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-bf").text != previous_ballfaced or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Runs
-            player_runs_div = player.find_element(By.CLASS_NAME, "si-runs")
-            if int(player_runs_div.text) > highest_score:
-                highest_score = int(player_runs_div.text)
-                highest_score_player = player_name.text
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Average
-            previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+                # Highscore
+                player_runs_div = player.find_element(By.CLASS_NAME, "si-hs").text.replace("*", "")
+                if int(player_runs_div) > highest_score:
+                    highest_score = int(player_runs_div)
+                    highest_score_player = player_name.text
 
-            # Strike Rate
-            previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+                # Balls faced
+                previous_ballfaced = player.find_element(By.CLASS_NAME, "si-bf").text
 
-            print(team_name.text + "," + player_name.text + "," + str(player_runs_div.text) + ",")
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
 
-    print("Highest Runs: " + highest_score_player + "," + str(highest_score))
-except NoSuchElementException:
-    print("No results found")
+                print(team_name.text + "," + player_name.text + "," + str(player_runs_div) + ",")
 
-print("")
-print("")
-previous_ballfaced = 0
-previous_strike_rate = 0
-try:
-    # Get Highest Score
-    highest_score = 0
-    highest_score_player = ""
+        print("Highest Score: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
 
-    # Select the highest score option
-    all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-    team_select = Select(all_select_elements[1])
-    team_select.select_by_index(1)
-    time.sleep(5)
+    print("")
+    print("")
+    previous_average = 0
+    previous_strike_rate = 0
+    try:
+        # Get Highest Batting Average
+        highest_score = 0
+        highest_score_player = ""
 
-    for year in range(0, years):
+        # Select the highest score option
         all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-        team_select = Select(all_select_elements[0])
-        team_select.select_by_index(year)
+        team_select = Select(all_select_elements[1])
+        team_select.select_by_index(2)
+        time.sleep(5)
 
-        # Select all players list
-        parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
-        players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
-        player = players_list[0]
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
 
-        # Wait for div to load
-        wait_screen_loads = WebDriverWait(player, 20)
-        # Use a lambda function to check if the text is not equal to previous_average
-        element_found = wait_screen_loads.until(
-            lambda d: d.find_element(By.CLASS_NAME, "si-bf").text != previous_ballfaced or
-                      d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
-        )
-        if element_found:
-            # Team Name
-            team_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
-            team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
 
-            # Name
-            player_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Highscore
-            player_runs_div = player.find_element(By.CLASS_NAME, "si-hs").text.replace("*", "")
-            if int(player_runs_div) > highest_score:
-                highest_score = int(player_runs_div)
-                highest_score_player = player_name.text
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Balls faced
-            previous_ballfaced = player.find_element(By.CLASS_NAME, "si-bf").text
+                # Matches
+                player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
 
-            # Strike Rate
-            previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+                # Batting Average
+                previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+                if float(previous_average) > highest_score and int(player_match_div.text) > 6:
+                    highest_score = float(previous_average)
+                    highest_score_player = player_name.text
 
-            print(team_name.text + "," + player_name.text + "," + str(player_runs_div) + ",")
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
 
-    print("Highest Score: " + highest_score_player + "," + str(highest_score))
-except NoSuchElementException:
-    print("No results found")
+                print(team_name.text + "," + player_name.text + "," + str(previous_average) + ",")
 
+        print("Highest Average: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
 
-print("")
-print("")
-previous_average = 0
-previous_strike_rate = 0
-try:
-    # Get Highest Batting Average
-    highest_score = 0
-    highest_score_player = ""
+    print("")
+    print("")
+    previous_average = 0
+    previous_strike_rate = 0
+    try:
+        # Get Highest Strike Rate
+        highest_score = 0
+        highest_score_player = ""
 
-    # Select the highest score option
-    all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-    team_select = Select(all_select_elements[1])
-    team_select.select_by_index(2)
-    time.sleep(5)
-
-    for year in range(0, years):
+        # Select the highest score option
         all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-        team_select = Select(all_select_elements[0])
-        team_select.select_by_index(year)
+        team_select = Select(all_select_elements[1])
+        team_select.select_by_index(3)
+        time.sleep(5)
 
-        # Select all players list
-        parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
-        players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
-        player = players_list[0]
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
 
-        # Wait for div to load
-        wait_screen_loads = WebDriverWait(player, 20)
-        # Use a lambda function to check if the text is not equal to previous_average
-        element_found = wait_screen_loads.until(
-            lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
-                      d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
-        )
-        if element_found:
-            # Team Name
-            team_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
-            team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
 
-            # Name
-            player_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Matches
-            player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Batting Average
-            previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
-            if float(previous_average) > highest_score and int(player_match_div.text) > 6:
-                highest_score = float(previous_average)
-                highest_score_player = player_name.text
+                # Matches
+                player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
 
-            # Strike Rate
-            previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+                # Batting Average
+                previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
 
-            print(team_name.text + "," + player_name.text + "," + str(previous_average) + ",")
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+                if float(previous_strike_rate) > highest_score and int(player_match_div.text) > 6:
+                    highest_score = float(previous_strike_rate)
+                    highest_score_player = player_name.text
 
-    print("Highest Average: " + highest_score_player + "," + str(highest_score))
-except NoSuchElementException:
-    print("No results found")
+                print(team_name.text + "," + player_name.text + "," + str(previous_strike_rate) + ",")
 
+        print("Highest Strike Rate: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
 
-print("")
-print("")
-previous_average = 0
-previous_strike_rate = 0
-try:
-    # Get Highest Strike Rate
-    highest_score = 0
-    highest_score_player = ""
+    print("")
+    print("")
+    previous_average = 0
+    previous_strike_rate = 0
+    try:
+        # Get Most 100s
+        highest_score = 0
+        highest_score_player = ""
 
-    # Select the highest score option
-    all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-    team_select = Select(all_select_elements[1])
-    team_select.select_by_index(3)
-    time.sleep(5)
-
-    for year in range(0, years):
+        # Select the highest score option
         all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-        team_select = Select(all_select_elements[0])
-        team_select.select_by_index(year)
+        team_select = Select(all_select_elements[1])
+        team_select.select_by_index(4)
+        time.sleep(5)
 
-        # Select all players list
-        parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
-        players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
-        player = players_list[0]
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
 
-        # Wait for div to load
-        wait_screen_loads = WebDriverWait(player, 20)
-        # Use a lambda function to check if the text is not equal to previous_average
-        element_found = wait_screen_loads.until(
-            lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
-                      d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
-        )
-        if element_found:
-            # Team Name
-            team_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
-            team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
 
-            # Name
-            player_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Matches
-            player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Batting Average
-            previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+                # Matches
+                player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
 
-            # Strike Rate
-            previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
-            if float(previous_strike_rate) > highest_score and int(player_match_div.text) > 6:
-                highest_score = float(previous_strike_rate)
-                highest_score_player = player_name.text
+                # Batting Average
+                previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
 
-            print(team_name.text + "," + player_name.text + "," + str(previous_strike_rate) + ",")
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
 
-    print("Highest Strike Rate: " + highest_score_player + "," + str(highest_score))
-except NoSuchElementException:
-    print("No results found")
+                # 100s
+                players_100s = player.find_element(By.CLASS_NAME, "si-100").text
+                if int(players_100s) > highest_score:
+                    highest_score = int(players_100s)
+                    highest_score_player = player_name.text
 
+                print(team_name.text + "," + player_name.text + "," + str(players_100s) + ",")
 
-print("")
-print("")
-previous_average = 0
-previous_strike_rate = 0
-try:
-    # Get Most 100s
-    highest_score = 0
-    highest_score_player = ""
+        print("Most 100s: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
 
-    # Select the highest score option
-    all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-    team_select = Select(all_select_elements[1])
-    team_select.select_by_index(4)
-    time.sleep(5)
+    print("")
+    print("")
+    previous_average = 0
+    previous_strike_rate = 0
+    try:
+        # Get Most 50s
+        highest_score = 0
+        highest_score_player = ""
 
-    for year in range(0, years):
+        # Select the highest score option
         all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-        team_select = Select(all_select_elements[0])
-        team_select.select_by_index(year)
+        team_select = Select(all_select_elements[1])
+        team_select.select_by_index(5)
+        time.sleep(5)
 
-        # Select all players list
-        parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
-        players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
-        player = players_list[0]
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
 
-        # Wait for div to load
-        wait_screen_loads = WebDriverWait(player, 20)
-        # Use a lambda function to check if the text is not equal to previous_average
-        element_found = wait_screen_loads.until(
-            lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
-                      d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
-        )
-        if element_found:
-            # Team Name
-            team_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
-            team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
 
-            # Name
-            player_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Matches
-            player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Batting Average
-            previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+                # Matches
+                player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
 
-            # Strike Rate
-            previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+                # Batting Average
+                previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
 
-            # 100s
-            players_100s = player.find_element(By.CLASS_NAME, "si-100").text
-            if int(players_100s) > highest_score:
-                highest_score = int(players_100s)
-                highest_score_player = player_name.text
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
 
-            print(team_name.text + "," + player_name.text + "," + str(players_100s) + ",")
+                # 50s
+                players_50s = player.find_element(By.CLASS_NAME, "si-50").text
+                if int(players_50s) > highest_score:
+                    highest_score = int(players_50s)
+                    highest_score_player = player_name.text
 
-    print("Most 100s: " + highest_score_player + "," + str(highest_score))
-except NoSuchElementException:
-    print("No results found")
+                print(team_name.text + "," + player_name.text + "," + str(players_50s) + ",")
 
+        print("Most 50s: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
 
-print("")
-print("")
-previous_average = 0
-previous_strike_rate = 0
-try:
-    # Get Most 50s
-    highest_score = 0
-    highest_score_player = ""
+    print("")
+    print("")
+    previous_average = 0
+    previous_strike_rate = 0
+    try:
+        # Get Most 4s
+        highest_score = 0
+        highest_score_player = ""
 
-    # Select the highest score option
-    all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-    team_select = Select(all_select_elements[1])
-    team_select.select_by_index(5)
-    time.sleep(5)
-
-    for year in range(0, years):
+        # Select the highest score option
         all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-        team_select = Select(all_select_elements[0])
-        team_select.select_by_index(year)
+        team_select = Select(all_select_elements[1])
+        team_select.select_by_index(6)
+        time.sleep(5)
 
-        # Select all players list
-        parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
-        players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
-        player = players_list[0]
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
 
-        # Wait for div to load
-        wait_screen_loads = WebDriverWait(player, 20)
-        # Use a lambda function to check if the text is not equal to previous_average
-        element_found = wait_screen_loads.until(
-            lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
-                      d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
-        )
-        if element_found:
-            # Team Name
-            team_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
-            team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
 
-            # Name
-            player_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Matches
-            player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Batting Average
-            previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+                # Matches
+                player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
 
-            # Strike Rate
-            previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+                # Batting Average
+                previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
 
-            # 50s
-            players_50s = player.find_element(By.CLASS_NAME, "si-50").text
-            if int(players_50s) > highest_score:
-                highest_score = int(players_50s)
-                highest_score_player = player_name.text
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
 
-            print(team_name.text + "," + player_name.text + "," + str(players_50s) + ",")
+                # 4s
+                players_4s = player.find_element(By.CLASS_NAME, "si-4s").text
+                if int(players_4s) > highest_score:
+                    highest_score = int(players_4s)
+                    highest_score_player = player_name.text
 
-    print("Most 50s: " + highest_score_player + "," + str(highest_score))
-except NoSuchElementException:
-    print("No results found")
+                print(team_name.text + "," + player_name.text + "," + str(players_4s) + ",")
 
+        print("Most 4s: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
 
-print("")
-print("")
-previous_average = 0
-previous_strike_rate = 0
-try:
-    # Get Most 4s
-    highest_score = 0
-    highest_score_player = ""
+    print("")
+    print("")
+    previous_average = 0
+    previous_strike_rate = 0
+    try:
+        # Get Most 6s
+        highest_score = 0
+        highest_score_player = ""
 
-    # Select the highest score option
-    all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-    team_select = Select(all_select_elements[1])
-    team_select.select_by_index(6)
-    time.sleep(5)
-
-    for year in range(0, years):
+        # Select the highest score option
         all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-        team_select = Select(all_select_elements[0])
-        team_select.select_by_index(year)
+        team_select = Select(all_select_elements[1])
+        team_select.select_by_index(7)
+        time.sleep(5)
 
-        # Select all players list
-        parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
-        players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
-        player = players_list[0]
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
 
-        # Wait for div to load
-        wait_screen_loads = WebDriverWait(player, 20)
-        # Use a lambda function to check if the text is not equal to previous_average
-        element_found = wait_screen_loads.until(
-            lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
-                      d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
-        )
-        if element_found:
-            # Team Name
-            team_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
-            team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
 
-            # Name
-            player_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Matches
-            player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Batting Average
-            previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+                # Matches
+                player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
 
-            # Strike Rate
-            previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+                # Batting Average
+                previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
 
-            # 4s
-            players_4s = player.find_element(By.CLASS_NAME, "si-4s").text
-            if int(players_4s) > highest_score:
-                highest_score = int(players_4s)
-                highest_score_player = player_name.text
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
 
-            print(team_name.text + "," + player_name.text + "," + str(players_4s) + ",")
+                # 6s
+                players_6s = player.find_element(By.CLASS_NAME, "si-6s").text
+                if int(players_6s) > highest_score:
+                    highest_score = int(players_6s)
+                    highest_score_player = player_name.text
 
-    print("Most 4s: " + highest_score_player + "," + str(highest_score))
-except NoSuchElementException:
-    print("No results found")
+                print(team_name.text + "," + player_name.text + "," + str(players_6s) + ",")
+
+        print("Most 6s: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
 
 
-print("")
-print("")
-previous_average = 0
-previous_strike_rate = 0
-try:
-    # Get Most 6s
-    highest_score = 0
-    highest_score_player = ""
 
-    # Select the highest score option
-    all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-    team_select = Select(all_select_elements[1])
-    team_select.select_by_index(7)
-    time.sleep(5)
 
-    for year in range(0, years):
+else:
+    # Switching to bowling tab
+    try:
+        bowling_button = driver.find_elements(By.CLASS_NAME, "si-tab")
+        bowling_button[1].click()
+    except NoSuchElementException:
+        print("Error switching to bowling tab")
+
+    # Getting bowling data
+    previous_average = 0
+    previous_strike_rate = 0
+    try:
+        # Get most wickets
+        highest_score = 0
+        highest_score_player = ""
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
+
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
+
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Wickets
+                player_wickets_div = player.find_element(By.CLASS_NAME, "si-wkts")
+                if int(player_wickets_div.text) > highest_score:
+                    highest_score = int(player_wickets_div.text)
+                    highest_score_player = player_name.text
+
+                # Average
+                previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+
+                print(team_name.text + "," + player_name.text + "," + str(player_wickets_div.text) + ",")
+
+        print("Highest Wickets: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
+
+
+    print("")
+    print("")
+    previous_economy = 0
+    previous_strike_rate = 0
+    try:
+        # Get Bowling Average
+        highest_score = 999999999
+        highest_score_player = ""
+
+        # Select the highest score option
         all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
-        team_select = Select(all_select_elements[0])
-        team_select.select_by_index(year)
+        team_select = Select(all_select_elements[1])
+        team_select.select_by_index(2)
+        time.sleep(5)
 
-        # Select all players list
-        parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
-        players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
-        player = players_list[0]
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
 
-        # Wait for div to load
-        wait_screen_loads = WebDriverWait(player, 20)
-        # Use a lambda function to check if the text is not equal to previous_average
-        element_found = wait_screen_loads.until(
-            lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
-                      d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
-        )
-        if element_found:
-            # Team Name
-            team_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
-            team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
 
-            # Name
-            player_name_div = player.find_element(By.CLASS_NAME, "si-player")
-            player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-econ").text != previous_economy or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Matches
-            player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
 
-            # Batting Average
-            previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+                # Overs
+                player_match_div = player.find_element(By.CLASS_NAME, "si-overs")
 
-            # Strike Rate
-            previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+                # Bowling Average
+                player_runs_div = player.find_element(By.CLASS_NAME, "si-ave")
+                if float(player_runs_div) < highest_score and int(player_match_div.text) > 9:
+                    highest_score = float(player_runs_div)
+                    highest_score_player = player_name.text
 
-            # 6s
-            players_6s = player.find_element(By.CLASS_NAME, "si-6s").text
-            if int(players_6s) > highest_score:
-                highest_score = int(players_6s)
-                highest_score_player = player_name.text
+                # Economy
+                previous_economy = player.find_element(By.CLASS_NAME, "si-econ").text
 
-            print(team_name.text + "," + player_name.text + "," + str(players_6s) + ",")
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
 
-    print("Most 6s: " + highest_score_player + "," + str(highest_score))
-except NoSuchElementException:
-    print("No results found")
+                print(team_name.text + "," + player_name.text + "," + str(player_runs_div) + ",")
+
+        print("Lowest Economy: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
+
+
+    print("")
+    print("")
+    previous_average = 0
+    previous_strike_rate = 0
+    try:
+        # Get Best Bowling Strike Rate
+        highest_score = 0
+        highest_score_player = ""
+
+        # Select the highest score option
+        all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+        team_select = Select(all_select_elements[1])
+        team_select.select_by_index(3)
+        time.sleep(5)
+
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
+
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
+
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Overs
+                player_match_div = player.find_element(By.CLASS_NAME, "si-overs")
+
+                # Batting Average
+                previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+                if float(previous_average) < highest_score and int(player_match_div.text) > 9:
+                    highest_score = float(previous_average)
+                    highest_score_player = player_name.text
+
+                print(team_name.text + "," + player_name.text + "," + str(previous_average) + ",")
+
+        print("Lowest Strike Rate: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
+
+
+    print("")
+    print("")
+    previous_average = 0
+    previous_strike_rate = 0
+    try:
+        # Get Best Economy Rate
+        highest_score = 0
+        highest_score_player = ""
+
+        # Select the highest score option
+        all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+        team_select = Select(all_select_elements[1])
+        team_select.select_by_index(4)
+        time.sleep(5)
+
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
+
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
+
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Matches
+                player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
+
+                # Batting Average
+                previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+                if float(previous_strike_rate) > highest_score and int(player_match_div.text) > 9:
+                    highest_score = float(previous_strike_rate)
+                    highest_score_player = player_name.text
+
+                print(team_name.text + "," + player_name.text + "," + str(previous_strike_rate) + ",")
+
+        print("Highest Strike Rate: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
+
+    print("")
+    print("")
+    previous_average = 0
+    previous_strike_rate = 0
+    try:
+        # Get Most 100s
+        highest_score = 0
+        highest_score_player = ""
+
+        # Select the highest score option
+        all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+        team_select = Select(all_select_elements[1])
+        team_select.select_by_index(4)
+        time.sleep(5)
+
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
+
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
+
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Matches
+                player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
+
+                # Batting Average
+                previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+
+                # 100s
+                players_100s = player.find_element(By.CLASS_NAME, "si-100").text
+                if int(players_100s) > highest_score:
+                    highest_score = int(players_100s)
+                    highest_score_player = player_name.text
+
+                print(team_name.text + "," + player_name.text + "," + str(players_100s) + ",")
+
+        print("Most 100s: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
+
+    print("")
+    print("")
+    previous_average = 0
+    previous_strike_rate = 0
+    try:
+        # Get Most 50s
+        highest_score = 0
+        highest_score_player = ""
+
+        # Select the highest score option
+        all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+        team_select = Select(all_select_elements[1])
+        team_select.select_by_index(5)
+        time.sleep(5)
+
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
+
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
+
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Matches
+                player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
+
+                # Batting Average
+                previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+
+                # 50s
+                players_50s = player.find_element(By.CLASS_NAME, "si-50").text
+                if int(players_50s) > highest_score:
+                    highest_score = int(players_50s)
+                    highest_score_player = player_name.text
+
+                print(team_name.text + "," + player_name.text + "," + str(players_50s) + ",")
+
+        print("Most 50s: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
+
+    print("")
+    print("")
+    previous_average = 0
+    previous_strike_rate = 0
+    try:
+        # Get Most 4s
+        highest_score = 0
+        highest_score_player = ""
+
+        # Select the highest score option
+        all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+        team_select = Select(all_select_elements[1])
+        team_select.select_by_index(6)
+        time.sleep(5)
+
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
+
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
+
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Matches
+                player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
+
+                # Batting Average
+                previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+
+                # 4s
+                players_4s = player.find_element(By.CLASS_NAME, "si-4s").text
+                if int(players_4s) > highest_score:
+                    highest_score = int(players_4s)
+                    highest_score_player = player_name.text
+
+                print(team_name.text + "," + player_name.text + "," + str(players_4s) + ",")
+
+        print("Most 4s: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
+
+    print("")
+    print("")
+    previous_average = 0
+    previous_strike_rate = 0
+    try:
+        # Get Most 6s
+        highest_score = 0
+        highest_score_player = ""
+
+        # Select the highest score option
+        all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+        team_select = Select(all_select_elements[1])
+        team_select.select_by_index(7)
+        time.sleep(5)
+
+        for year in range(0, years):
+            all_select_elements = driver.find_elements(By.CLASS_NAME, "si-selectBox")
+            team_select = Select(all_select_elements[0])
+            team_select.select_by_index(year)
+
+            # Select all players list
+            parent_div_players = driver.find_element(By.CLASS_NAME, "si-tbl-body")
+            players_list = parent_div_players.find_elements(By.CLASS_NAME, "si-tbl-row")
+            player = players_list[0]
+
+            # Wait for div to load
+            wait_screen_loads = WebDriverWait(player, 20)
+            # Use a lambda function to check if the text is not equal to previous_average
+            element_found = wait_screen_loads.until(
+                lambda d: d.find_element(By.CLASS_NAME, "si-ave").text != previous_average or
+                          d.find_element(By.CLASS_NAME, "si-sr").text != previous_strike_rate
+            )
+            if element_found:
+                # Team Name
+                team_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                team_div = team_name_div.find_element(By.CLASS_NAME, "si-team-name")
+                team_name = team_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Name
+                player_name_div = player.find_element(By.CLASS_NAME, "si-player")
+                player_name = player_name_div.find_element(By.CLASS_NAME, "si-fullName")
+
+                # Matches
+                player_match_div = player.find_element(By.CLASS_NAME, "si-mat")
+
+                # Batting Average
+                previous_average = player.find_element(By.CLASS_NAME, "si-ave").text
+
+                # Strike Rate
+                previous_strike_rate = player.find_element(By.CLASS_NAME, "si-sr").text
+
+                # 6s
+                players_6s = player.find_element(By.CLASS_NAME, "si-6s").text
+                if int(players_6s) > highest_score:
+                    highest_score = int(players_6s)
+                    highest_score_player = player_name.text
+
+                print(team_name.text + "," + player_name.text + "," + str(players_6s) + ",")
+
+        print("Most 6s: " + highest_score_player + "," + str(highest_score))
+    except NoSuchElementException:
+        print("No results found")
