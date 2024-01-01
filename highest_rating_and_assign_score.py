@@ -20,7 +20,7 @@ with open(bowling_file_path, 'r') as file:
 min_rating = min(ratings_bowling)
 adjusted_ratings = [rating - min_rating for rating in ratings_bowling]
 max_adjusted_rating = max(adjusted_ratings)
-normalized_ratings = [(round((rating / max_adjusted_rating) * 70, 2) + 30)for rating in adjusted_ratings]
+normalized_ratings = [(round((rating / max_adjusted_rating) * 40, 2) + 60)for rating in adjusted_ratings]
 # print(normalized_ratings)
 
 count = 0
@@ -56,8 +56,8 @@ with open(bowling_file_path, 'r') as file:
             #           + "," + str(wickets) + "," + bbi + "," + str(average) + "," + str(economy_rate) + "," +
             #           str(strike_rate) + "," + str(three_wickets) + "," + str(five_wickets) + "," +
             #           str(round(normalized_ratings[count])) + ",")
-            # if normalized_ratings[count] >= 80:
-            #     print(str(player_name) + "," + str(normalized_ratings[count]))
+            if normalized_ratings[count] >= 80:
+                print(str(player_name) + "," + str(normalized_ratings[count]))
             count += 1
 
 print(" ")
@@ -82,7 +82,7 @@ with open(batting_file_path, 'r') as file:
 min_rating = min(ratings_batting)
 adjusted_ratings = [rating - min_rating for rating in ratings_batting]
 max_adjusted_rating = max(adjusted_ratings)
-normalized_ratings = [(round((rating / max_adjusted_rating) * 45, 2) + 55)for rating in adjusted_ratings]
+normalized_ratings = [(round((rating / max_adjusted_rating) * 40, 2) + 60)for rating in adjusted_ratings]
 
 min_rating = min(runs_batting)
 adjusted_ratings = [runs - min_rating for runs in runs_batting]
@@ -184,14 +184,14 @@ for player, data in bowling_data.items():
     else:
         # Default batting values for players not in batting dataset
         combined_row = data + ['0'] * 11  # Adjust the number of '0's based on number of batting columns
-        combined_row = combined_row + ['25', '1', '']  # Default of 25 batting rating and 1 run
+        combined_row = combined_row + ['40', '1', '']  # Default of 25 batting rating and 1 run
     combined_data.append(combined_row)
 
 # Add remaining batting players
 for player, data in batting_data.items():
     if player not in bowling_data:
         # Default bowling values for players not in bowling dataset
-        default_bowling = ['0'] * 11 + ['25', '']  # Adjust the number of '0's based on number of bowling columns
+        default_bowling = ['0'] * 11 + ['40', '']  # Adjust the number of '0's based on number of bowling columns
         combined_row = data[:2] + default_bowling + data[2:]  # Default bowling rating of 25
         combined_data.append(combined_row)
 

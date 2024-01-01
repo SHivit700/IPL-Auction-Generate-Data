@@ -90,7 +90,7 @@ max_maidens = 3
 max_strike_rate = 8.72
 
 # Open the file and read it as CSV
-with open(bowling_file_path, 'r') as file:
+with (open(bowling_file_path, 'r') as file):
     csv_reader = csv.reader(file)
 
     with open(bowling_rating_file_path, 'w') as write_file:
@@ -113,23 +113,25 @@ with open(bowling_file_path, 'r') as file:
 
                 # Calculate the bowling rating
                 # Normalizing each factor (assuming higher is better for simplicity, except for economy and average)
-                normalized_wickets = (wickets / match) / (max_wickets / 15)
-                normalized_economy = 1 - (economy_rate / max_economy)  # Lower economy is better
-                normalized_average = 1 - (average / max_average)  # Lower average is better
+                normalized_wickets = (wickets / max_wickets)
+                normalized_wickets_per_over = ((wickets / overs) / (max_wickets / 56.2))
+                normalized_economy = 1 - (max_economy / economy_rate)  # Lower economy is better
+                normalized_average = 1 - (max_average / average)  # Lower average is better
                 normalized_five_w = five_wickets / max_five_w
                 normalized_three_w = three_wickets / max_three_w
                 normalized_maidens = maidens / max_maidens
-                normalized_strike_rate = strike_rate / max_strike_rate
+                normalized_strike_rate = 1 - (max_strike_rate / strike_rate)
 
                 # Weighing each factor
-                score = (normalized_wickets * 30) + \
-                        (normalized_economy * 20) + \
-                        (normalized_average * 10) + \
-                        (normalized_five_w * 10) + \
-                        (normalized_three_w * 5) + \
+                score = (normalized_wickets * 20) + \
+                        (normalized_wickets_per_over * 20) + \
+                        (normalized_economy * 10) + \
+                        (normalized_average * 5) + \
+                        (normalized_five_w * 20) + \
+                        (normalized_three_w * 10) + \
                         (normalized_maidens * 5) + \
                         (normalized_strike_rate * 5) + \
-                        (match * 10)
+                        (overs * 2.5)
 
                 rating = score * 100  # Scale to 100
 
