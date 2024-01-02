@@ -87,7 +87,7 @@ normalized_ratings = [(round((rating / max_adjusted_rating) * 40, 2) + 60)for ra
 min_rating = min(runs_batting)
 adjusted_ratings = [runs - min_rating for runs in runs_batting]
 max_adjusted_rating = max(adjusted_ratings)
-normalized_ratings_runs = [(round((runs / max_adjusted_rating) * 59, 2) + 1)for runs in adjusted_ratings]
+normalized_ratings_runs = [(round((runs / max_adjusted_rating) * 55, 2) + 5)for runs in adjusted_ratings]
 # print(normalized_ratings)
 
 count = 0
