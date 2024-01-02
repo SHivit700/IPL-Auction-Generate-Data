@@ -161,7 +161,7 @@ with open(batting_file_path, 'r') as file:
 # File paths
 batting_file_path = '/Users/shivit/Desktop/Lab/webTester/dataIPL/batting_score_final.txt'
 bowling_file_path = '/Users/shivit/Desktop/Lab/webTester/dataIPL/bowling_score_final.txt'
-combined_file_path = '/Users/shivit/Desktop/Lab/webTester/dataIPL/combined_rating_final.txt'
+combined_file_path = '/Users/shivit/Desktop/Lab/webTester/dataIPL/cricket-web-app/public/combined_rating_final.txt'
 
 # Read data into dictionaries
 bowling_data = {}
